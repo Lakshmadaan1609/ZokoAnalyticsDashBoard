@@ -39,6 +39,14 @@ export default function RevenueChart({ data, isLoading }: RevenueChartProps) {
     );
   }
 
+  if (!data || data.length === 0) {
+    return (
+      <div className="flex h-[300px] items-center justify-center border border-white/5 rounded-xl bg-zinc-900/50">
+        <p className="text-sm text-zinc-500">No revenue data available</p>
+      </div>
+    );
+  }
+
   const chartData = {
     labels: data.map((d) => {
       const date = new Date(d.date);

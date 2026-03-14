@@ -23,8 +23,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      const message = error.response.data?.detail || 'An error occurred';
-      console.error('API Error:', message);
+      if (error.response.status !== 404) {
+        const message = error.response.data?.detail || 'An error occurred';
+        console.error('API Error:', message);
+      }
     } else if (error.request) {
       console.error('Network Error: No response received');
     } else {

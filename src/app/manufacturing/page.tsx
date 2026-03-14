@@ -381,7 +381,13 @@ export default function ManufacturingPage() {
         </Card>
 
         {/* ── Manufacturing Analytics ── */}
-        {analytics && (
+        {!analytics ? (
+          <div className="flex h-[300px] flex-col items-center justify-center rounded-xl border border-white/5 bg-zinc-900/50 backdrop-blur-sm">
+            <BarChart3 className="mb-3 h-8 w-8 text-zinc-600" />
+            <p className="text-sm font-medium text-zinc-400">No Analytics Data Yet</p>
+            <p className="text-xs text-zinc-600">Start dispatching stock to see trends</p>
+          </div>
+        ) : (
           <>
             {/* Stat Cards */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">

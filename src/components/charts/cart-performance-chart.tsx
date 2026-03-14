@@ -28,6 +28,14 @@ export default function CartPerformanceChart({ data, isLoading }: CartPerformanc
     );
   }
 
+  if (!data || data.length === 0) {
+    return (
+      <div className="flex h-[300px] items-center justify-center border border-white/5 rounded-xl bg-zinc-900/50">
+        <p className="text-sm text-zinc-500">No cart performance data available</p>
+      </div>
+    );
+  }
+
   const chartData = {
     labels: data.map((d) => `Cart ${d.cart_id}`),
     datasets: [

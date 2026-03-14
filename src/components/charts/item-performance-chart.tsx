@@ -34,7 +34,7 @@ export default function ItemPerformanceChart({ data, isLoading }: ItemPerformanc
 
   if (!data || data.length === 0) {
     return (
-      <div className="flex h-[300px] items-center justify-center">
+      <div className="flex h-[300px] items-center justify-center border border-white/5 rounded-xl bg-zinc-900/50">
         <p className="text-sm text-zinc-500">No sales data available</p>
       </div>
     );

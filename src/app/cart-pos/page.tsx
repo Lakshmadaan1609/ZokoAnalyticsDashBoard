@@ -72,6 +72,7 @@ export default function CartPOSPage() {
   const { submitOrder, isSubmitting } = useCart();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [mobileCartOpen, setMobileCartOpen] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'upi'>('upi');
 
   const availableCarts = useMemo(() => {
     if (user?.role === 'staff' && user.cart_id) {
@@ -101,8 +102,9 @@ export default function CartPOSPage() {
       if (orderItem.halfQty > 0) (orderData[halfKey] as number) = orderItem.halfQty;
       if (orderItem.fullQty > 0) (orderData[fullKey] as number) = orderItem.fullQty;
     }
-    orderData.cash_total = parseInt(cart.cashAmount) || 0;
-    orderData.upi_total = parseInt(cart.upiAmount) || 0;
+    const total = store.getTotal(activeCartId);
+    orderData.cash_total = paymentMethod === 'cash' ? total : 0;
+    orderData.upi_total = paymentMethod === 'upi' ? total : 0;
     submitOrder(orderData);
     store.clearCart(activeCartId);
     setMobileCartOpen(false);
@@ -173,18 +175,26 @@ export default function CartPOSPage() {
           </div>
           <Separator className="mb-3 bg-white/5" />
           <div className="mb-4 grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label className="flex items-center gap-1.5 text-xs text-zinc-400">
-                <Banknote className="h-3.5 w-3.5 text-green-400" /> Cash
-              </Label>
-              <Input type="number" placeholder="₹0" value={cart.cashAmount} onChange={(e) => store.setCashAmount(activeCartId, e.target.value)} className="border-white/10 bg-zinc-800/50 text-white" />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="flex items-center gap-1.5 text-xs text-zinc-400">
-                <CreditCard className="h-3.5 w-3.5 text-violet-400" /> UPI
-              </Label>
-              <Input type="number" placeholder="₹0" value={cart.upiAmount} onChange={(e) => store.setUpiAmount(activeCartId, e.target.value)} className="border-white/10 bg-zinc-800/50 text-white" />
-            </div>
+            <button
+              onClick={() => setPaymentMethod('cash')}
+              className={`flex items-center justify-center gap-2 rounded-xl border py-3 text-sm font-semibold transition-all ${
+                paymentMethod === 'cash'
+                  ? 'border-green-500 bg-green-500/10 text-green-400'
+                  : 'border-white/10 bg-zinc-800/50 text-zinc-400 hover:border-white/20 hover:text-white'
+              }`}
+            >
+              <Banknote className="h-4 w-4" /> Cash
+            </button>
+            <button
+              onClick={() => setPaymentMethod('upi')}
+              className={`flex items-center justify-center gap-2 rounded-xl border py-3 text-sm font-semibold transition-all ${
+                paymentMethod === 'upi'
+                  ? 'border-violet-500 bg-violet-500/10 text-violet-400'
+                  : 'border-white/10 bg-zinc-800/50 text-zinc-400 hover:border-white/20 hover:text-white'
+              }`}
+            >
+              <CreditCard className="h-4 w-4" /> UPI
+            </button>
           </div>
           <Button onClick={handleCheckout} disabled={isSubmitting || cart.items.length === 0} className={`w-full gap-2 py-5 text-sm font-semibold text-white ${accent.checkoutBtn}`}>
             {isSubmitting ? (<><Loader2 className="h-4 w-4 animate-spin" />Processing...</>) : (<><Receipt className="h-4 w-4" />Place Order • {formatCurrency(store.getTotal(activeCartId))}</>)}
