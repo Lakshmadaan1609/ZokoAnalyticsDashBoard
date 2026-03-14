@@ -4,7 +4,7 @@ import { ManufacturingCreate, ManufacturingRecord } from '@/types/apiTypes';
 export const manufacturingService = {
   getAll: async (limit = 100, offset = 0): Promise<ManufacturingRecord[]> => {
     const response = await api.get('/manufacturing', { params: { limit, offset } });
-    return response.data;
+    return Array.isArray(response.data) ? response.data : [];
   },
 
   getByDate: async (date: string): Promise<ManufacturingRecord> => {

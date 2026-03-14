@@ -4,12 +4,12 @@ import { DistributionCreate, DistributionRecord } from '@/types/apiTypes';
 export const stockService = {
   getAll: async (params?: { cart_id?: number; date?: string; limit?: number; offset?: number }): Promise<DistributionRecord[]> => {
     const response = await api.get('/distribution', { params });
-    return response.data;
+    return Array.isArray(response.data) ? response.data : [];
   },
 
   getByCartId: async (cartId: number, date?: string): Promise<DistributionRecord[]> => {
     const response = await api.get(`/distribution/${cartId}`, { params: date ? { date } : {} });
-    return response.data;
+    return Array.isArray(response.data) ? response.data : [];
   },
 
   distribute: async (data: DistributionCreate): Promise<DistributionRecord> => {
