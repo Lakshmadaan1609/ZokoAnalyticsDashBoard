@@ -30,6 +30,18 @@ interface RevenueChartProps {
   isLoading?: boolean;
 }
 
+const createVerticalGradient = (
+  ctx: CanvasRenderingContext2D,
+  chartArea: { top: number; bottom: number },
+  from: string,
+  to: string
+) => {
+  const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+  gradient.addColorStop(0, from);
+  gradient.addColorStop(1, to);
+  return gradient;
+};
+
 export default function RevenueChart({ data, isLoading }: RevenueChartProps) {
   if (isLoading) {
     return (
@@ -56,8 +68,21 @@ export default function RevenueChart({ data, isLoading }: RevenueChartProps) {
       {
         label: 'Total Revenue',
         data: data.map((d) => d.total),
-        borderColor: '#f97316',
-        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+        borderColor: (context: { chart: ChartJS }) => {
+          const { ctx, chartArea } = context.chart;
+          if (!chartArea) return '#f97316';
+          return createVerticalGradient(ctx, chartArea, '#f97316', '#fb923c');
+        },
+        backgroundColor: (context: { chart: ChartJS }) => {
+          const { ctx, chartArea } = context.chart;
+          if (!chartArea) return 'rgba(249, 115, 22, 0.12)';
+          return createVerticalGradient(
+            ctx,
+            chartArea,
+            'rgba(249, 115, 22, 0.24)',
+            'rgba(251, 146, 60, 0.02)'
+          );
+        },
         fill: true,
         tension: 0.4,
         pointBackgroundColor: '#f97316',
@@ -70,7 +95,11 @@ export default function RevenueChart({ data, isLoading }: RevenueChartProps) {
       {
         label: 'Cash',
         data: data.map((d) => d.cash),
-        borderColor: '#22c55e',
+        borderColor: (context: { chart: ChartJS }) => {
+          const { ctx, chartArea } = context.chart;
+          if (!chartArea) return '#22c55e';
+          return createVerticalGradient(ctx, chartArea, '#22c55e', '#4ade80');
+        },
         backgroundColor: 'rgba(34, 197, 94, 0.05)',
         fill: true,
         tension: 0.4,
@@ -80,7 +109,11 @@ export default function RevenueChart({ data, isLoading }: RevenueChartProps) {
       {
         label: 'UPI',
         data: data.map((d) => d.upi),
-        borderColor: '#8b5cf6',
+        borderColor: (context: { chart: ChartJS }) => {
+          const { ctx, chartArea } = context.chart;
+          if (!chartArea) return '#8b5cf6';
+          return createVerticalGradient(ctx, chartArea, '#8b5cf6', '#a855f7');
+        },
         backgroundColor: 'rgba(139, 92, 246, 0.05)',
         fill: true,
         tension: 0.4,

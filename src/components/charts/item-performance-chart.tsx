@@ -23,6 +23,20 @@ const COLORS = [
   '#64748b',
 ];
 
+const createRadialGradient = (
+  ctx: CanvasRenderingContext2D,
+  chartArea: { left: number; right: number; top: number; bottom: number },
+  baseColor: string
+) => {
+  const x = (chartArea.left + chartArea.right) / 2;
+  const y = (chartArea.top + chartArea.bottom) / 2;
+  const r = Math.min(chartArea.right - chartArea.left, chartArea.bottom - chartArea.top) / 2;
+  const gradient = ctx.createRadialGradient(x, y, r * 0.1, x, y, r);
+  gradient.addColorStop(0, baseColor);
+  gradient.addColorStop(1, `${baseColor}20`);
+  return gradient;
+};
+
 export default function ItemPerformanceChart({ data, isLoading }: ItemPerformanceChartProps) {
   if (isLoading) {
     return (
@@ -45,7 +59,14 @@ export default function ItemPerformanceChart({ data, isLoading }: ItemPerformanc
     datasets: [
       {
         data: data.map((d) => d.quantity),
-        backgroundColor: data.map((_, i) => COLORS[i % COLORS.length]),
+        backgroundColor: (context: { chart: ChartJS; dataIndex: number }) => {
+          const { ctx, chartArea } = context.chart;
+          if (!chartArea) {
+            return COLORS[context.dataIndex % COLORS.length];
+          }
+          const base = COLORS[context.dataIndex % COLORS.length];
+          return createRadialGradient(ctx, chartArea, base);
+        },
         borderWidth: 0,
         hoverOffset: 8,
       },

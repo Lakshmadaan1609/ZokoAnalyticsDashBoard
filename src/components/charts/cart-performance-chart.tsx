@@ -19,6 +19,18 @@ interface CartPerformanceChartProps {
   isLoading?: boolean;
 }
 
+const createVerticalGradient = (
+  ctx: CanvasRenderingContext2D,
+  chartArea: { top: number; bottom: number },
+  from: string,
+  to: string
+) => {
+  const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+  gradient.addColorStop(0, from);
+  gradient.addColorStop(1, to);
+  return gradient;
+};
+
 export default function CartPerformanceChart({ data, isLoading }: CartPerformanceChartProps) {
   if (isLoading) {
     return (
@@ -42,11 +54,22 @@ export default function CartPerformanceChart({ data, isLoading }: CartPerformanc
       {
         label: 'Revenue',
         data: data.map((d) => d.total_revenue),
-        backgroundColor: [
-          'rgba(249, 115, 22, 0.8)',
-          'rgba(139, 92, 246, 0.8)',
-          'rgba(34, 197, 94, 0.8)',
-        ],
+        backgroundColor: (context: { chart: ChartJS }) => {
+          const { ctx, chartArea } = context.chart;
+          if (!chartArea) {
+            return [
+              'rgba(249, 115, 22, 0.8)',
+              'rgba(139, 92, 246, 0.8)',
+              'rgba(34, 197, 94, 0.8)',
+            ];
+          }
+          const base = [
+            ['#f97316', '#fb923c'],
+            ['#8b5cf6', '#a855f7'],
+            ['#22c55e', '#4ade80'],
+          ] as const;
+          return base.map(([from, to]) => createVerticalGradient(ctx, chartArea, from, to));
+        },
         borderColor: [
           'rgba(249, 115, 22, 1)',
           'rgba(139, 92, 246, 1)',
