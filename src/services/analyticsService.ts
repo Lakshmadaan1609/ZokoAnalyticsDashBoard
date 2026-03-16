@@ -92,17 +92,29 @@ export const analyticsService = {
     for (const cartId of cartIds) {
       try {
         const sales = await cartService.getSalesByCartId(cartId, today);
-        const totalRevenue = Array.isArray(sales) ? sales.reduce((sum: number, s: CartSalesRecord) => {
-          return sum + (s.cash_total || 0) + (s.upi_total || 0);
-        }, 0) : 0;
+        const cashTotal = Array.isArray(sales)
+          ? sales.reduce((sum: number, s: CartSalesRecord) => sum + (s.cash_total || 0), 0)
+          : 0;
+        const upiTotal = Array.isArray(sales)
+          ? sales.reduce((sum: number, s: CartSalesRecord) => sum + (s.upi_total || 0), 0)
+          : 0;
+        const totalRevenue = cashTotal + upiTotal;
 
         results.push({
           cart_id: cartId,
           total_revenue: totalRevenue,
           total_orders: Array.isArray(sales) ? sales.length : 0,
+          cash_total: cashTotal,
+          upi_total: upiTotal,
         });
       } catch {
-        results.push({ cart_id: cartId, total_revenue: 0, total_orders: 0 });
+        results.push({
+          cart_id: cartId,
+          total_revenue: 0,
+          total_orders: 0,
+          cash_total: 0,
+          upi_total: 0,
+        });
       }
     }
     return results;

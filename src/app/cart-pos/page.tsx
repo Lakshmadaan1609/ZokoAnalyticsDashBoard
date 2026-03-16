@@ -282,35 +282,35 @@ export default function CartPOSPage() {
                         </div>
 
                         {/* Half */}
-                        <div className="mb-1.5 flex items-center justify-between rounded-lg border border-white/5 bg-zinc-800/30 px-2 py-1 sm:mb-2 sm:py-1.5">
+                        <div className="mb-1.5 flex items-center justify-between rounded-lg border border-white/5 bg-zinc-800/30 px-2 py-1.5 sm:mb-2 sm:py-1.5">
                           <div>
                             <p className="text-[9px] font-medium uppercase tracking-wider text-zinc-500 sm:text-[10px]">Half</p>
                             <p className="text-[11px] font-bold text-zinc-300 sm:text-xs">{formatCurrency(item.halfPrice)}</p>
                           </div>
-                          <div className="flex items-center gap-1 sm:gap-1.5">
-                            <button onClick={() => store.removeHalf(activeCartId, item.id)} className="flex h-6 w-6 items-center justify-center rounded-md bg-zinc-700/50 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400 sm:h-7 sm:w-7 sm:rounded-lg">
-                              <Minus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                          <div className="flex items-center gap-1.5 sm:gap-1.5">
+                            <button type="button" onClick={() => store.removeHalf(activeCartId, item.id)} className="flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg bg-zinc-700/50 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400 active:scale-95 sm:h-7 sm:w-7 sm:min-h-0 sm:min-w-0">
+                              <Minus className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                             </button>
-                            <span className="w-5 text-center text-xs font-bold text-white sm:w-6 sm:text-sm">{qty.half}</span>
-                            <button onClick={() => store.addHalf(activeCartId, item)} className={`flex h-6 w-6 items-center justify-center rounded-md transition-colors sm:h-7 sm:w-7 sm:rounded-lg ${accent.plusBtn}`}>
-                              <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                            <span className="w-6 text-center text-sm font-bold text-white sm:w-6 sm:text-sm">{qty.half}</span>
+                            <button type="button" onClick={() => store.addHalf(activeCartId, item)} className={`flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg transition-colors active:scale-95 sm:h-7 sm:w-7 sm:min-h-0 sm:min-w-0 ${accent.plusBtn}`}>
+                              <Plus className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                             </button>
                           </div>
                         </div>
 
                         {/* Full */}
-                        <div className="flex items-center justify-between rounded-lg border border-white/5 bg-zinc-800/30 px-2 py-1 sm:py-1.5">
+                        <div className="flex items-center justify-between rounded-lg border border-white/5 bg-zinc-800/30 px-2 py-1.5 sm:py-1.5">
                           <div>
                             <p className="text-[9px] font-medium uppercase tracking-wider text-zinc-500 sm:text-[10px]">Full</p>
                             <p className="text-[11px] font-bold text-zinc-300 sm:text-xs">{formatCurrency(item.fullPrice)}</p>
                           </div>
-                          <div className="flex items-center gap-1 sm:gap-1.5">
-                            <button onClick={() => store.removeFull(activeCartId, item.id)} className="flex h-6 w-6 items-center justify-center rounded-md bg-zinc-700/50 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400 sm:h-7 sm:w-7 sm:rounded-lg">
-                              <Minus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                          <div className="flex items-center gap-1.5 sm:gap-1.5">
+                            <button type="button" onClick={() => store.removeFull(activeCartId, item.id)} className="flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg bg-zinc-700/50 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400 active:scale-95 sm:h-7 sm:w-7 sm:min-h-0 sm:min-w-0">
+                              <Minus className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                             </button>
-                            <span className="w-5 text-center text-xs font-bold text-white sm:w-6 sm:text-sm">{qty.full}</span>
-                            <button onClick={() => store.addFull(activeCartId, item)} className={`flex h-6 w-6 items-center justify-center rounded-md transition-colors sm:h-7 sm:w-7 sm:rounded-lg ${accent.plusBtn}`}>
-                              <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                            <span className="w-6 text-center text-sm font-bold text-white sm:w-6 sm:text-sm">{qty.full}</span>
+                            <button type="button" onClick={() => store.addFull(activeCartId, item)} className={`flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg transition-colors active:scale-95 sm:h-7 sm:w-7 sm:min-h-0 sm:min-w-0 ${accent.plusBtn}`}>
+                              <Plus className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                             </button>
                           </div>
                         </div>

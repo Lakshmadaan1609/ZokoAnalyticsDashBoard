@@ -30,6 +30,15 @@ export default function DashboardPage() {
     refetchAll,
   } = useAnalytics();
 
+  const cartBreakdown = [
+    { id: 1, label: 'Cart 1' },
+    { id: 2, label: 'Cart 2' },
+    { id: 3, label: 'Cart 3' },
+  ].map((cart) => ({
+    ...cart,
+    perf: cartPerformance.find((p) => p.cart_id === cart.id),
+  }));
+
   const kpiCards = [
     {
       title: 'Total Momos Produced',
@@ -137,6 +146,83 @@ export default function DashboardPage() {
             </Card>
           ))}
         </div>
+
+        {/* Cart-wise Payments Today */}
+        <Card className="border-white/10 bg-zinc-900/50 backdrop-blur-sm">
+          <CardHeader className="border-b border-white/5 pb-4">
+            <CardTitle className="text-base font-semibold text-zinc-200">
+              Cart-wise Today Collection
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4">
+            {isLoadingCartPerformance ? (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                {cartBreakdown.map((cart) => (
+                  <div
+                    key={cart.id}
+                    className="rounded-xl border border-white/5 bg-zinc-900/70 p-4"
+                  >
+                    <div className="mb-3 flex items-center justify-between">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                        {cart.label}
+                      </p>
+                      <span className="h-2 w-2 rounded-full bg-zinc-700" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-4 w-20 animate-pulse rounded bg-zinc-800" />
+                      <div className="h-4 w-16 animate-pulse rounded bg-zinc-800" />
+                      <div className="h-4 w-24 animate-pulse rounded bg-zinc-800" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                {cartBreakdown.map((cart) => {
+                  const perf = cart.perf;
+                  const cash = perf?.cash_total ?? 0;
+                  const upi = perf?.upi_total ?? 0;
+                  const total = perf?.total_revenue ?? 0;
+                  return (
+                    <div
+                      key={cart.id}
+                      className="rounded-xl border border-white/5 bg-gradient-to-br from-zinc-900/80 to-zinc-900/40 p-4"
+                    >
+                      <div className="mb-3 flex items-center justify-between">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                          {cart.label}
+                        </p>
+                        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+                          {formatCurrency(total)}
+                        </span>
+                      </div>
+                      <div className="space-y-2 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-zinc-500">Cash</span>
+                          <span className="font-semibold text-zinc-200">
+                            {formatCurrency(cash)}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-zinc-500">UPI</span>
+                          <span className="font-semibold text-zinc-200">
+                            {formatCurrency(upi)}
+                          </span>
+                        </div>
+                        <div className="mt-1 flex items-center justify-between text-[11px] text-zinc-500">
+                          <span>Orders</span>
+                          <span className="font-medium text-zinc-300">
+                            {perf?.total_orders ?? 0}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Charts Row 1 */}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

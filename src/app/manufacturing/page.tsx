@@ -462,31 +462,20 @@ export default function ManufacturingPage() {
                   <div className="h-[280px]">
                     <Doughnut
                       ref={doughnutRef}
-                      data={(() => {
-                        const chart = doughnutRef.current;
-                        if (chart) {
-                          const ctx = chart.ctx;
-                          const h = chart.chartArea?.height || 280;
-                          return {
-                            labels: ITEM_KEYS.map((k) => ITEM_LABELS[k]),
-                            datasets: [{
-                              data: ITEM_KEYS.map((k) => analytics.normalizedTotals[k]),
-                              backgroundColor: GRADIENT_PAIRS.map(([from, to]) => createGradient(ctx, h, from, to)),
-                              borderWidth: 0,
-                              hoverOffset: 8,
-                            }],
-                          };
-                        }
-                        return {
-                          labels: ITEM_KEYS.map((k) => ITEM_LABELS[k]),
-                          datasets: [{
-                            data: ITEM_KEYS.map((k) => analytics.normalizedTotals[k]),
-                            backgroundColor: FLAT_COLORS,
-                            borderWidth: 0,
-                            hoverOffset: 8,
-                          }],
-                        };
-                      })()}
+                      data={{
+                        labels: ITEM_KEYS.map((k) => ITEM_LABELS[k]),
+                        datasets: [{
+                          data: ITEM_KEYS.map((k) => analytics.normalizedTotals[k]),
+                          backgroundColor: (ctx: { chart: { ctx: CanvasRenderingContext2D; chartArea?: { height: number } }; dataIndex: number }) => {
+                            const c = ctx.chart;
+                            const h = c.chartArea?.height ?? 280;
+                            const i = ctx.dataIndex;
+                            return createGradient(c.ctx, h, GRADIENT_PAIRS[i][0], GRADIENT_PAIRS[i][1]);
+                          },
+                          borderWidth: 0,
+                          hoverOffset: 8,
+                        }],
+                      }}
                       options={{
                         responsive: true,
                         maintainAspectRatio: false,
@@ -523,18 +512,17 @@ export default function ManufacturingPage() {
                   <div className="h-[280px]">
                     <Bar
                       ref={barRef}
-                      data={(() => {
-                        const chart = barRef.current;
-                        const datasets = analytics.weeklyDatasets.map((ds, i) => {
-                          if (chart) {
-                            const ctx = chart.ctx;
-                            const h = chart.chartArea?.height || 280;
-                            return { ...ds, backgroundColor: createGradient(ctx, h, GRADIENT_PAIRS[i][0], GRADIENT_PAIRS[i][1]) };
-                          }
-                          return ds;
-                        });
-                        return { labels: analytics.weeklyLabels, datasets };
-                      })()}
+                      data={{
+                        labels: analytics.weeklyLabels,
+                        datasets: analytics.weeklyDatasets.map((ds, i) => ({
+                          ...ds,
+                          backgroundColor: (ctx: { chart: { ctx: CanvasRenderingContext2D; chartArea?: { height: number } } }) => {
+                            const c = ctx.chart;
+                            const h = c.chartArea?.height ?? 280;
+                            return createGradient(c.ctx, h, GRADIENT_PAIRS[i][0], GRADIENT_PAIRS[i][1]);
+                          },
+                        })),
+                      }}
                       options={{
                         responsive: true,
                         maintainAspectRatio: false,

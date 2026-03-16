@@ -132,6 +132,8 @@ export interface CartPerformance {
   cart_id: number;
   total_revenue: number;
   total_orders: number;
+  cash_total: number;
+  upi_total: number;
 }
 
 export interface ItemSales {
