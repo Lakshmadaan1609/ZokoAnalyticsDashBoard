@@ -28,9 +28,9 @@ export const analyticsService = {
       const totalOrders = Array.isArray(sales) ? sales.length : 0;
 
       const totalMomosProduced = manufacturing
-        ? (manufacturing.veg || 0) + (manufacturing.paneer || 0) + (manufacturing.chicken || 0) +
-          (manufacturing.cheesecorn || 0) + (manufacturing.springroll || 0) +
-          (manufacturing.attaveg || 0) + (manufacturing.attachicken || 0)
+        ? ((manufacturing.veg || 0) + (manufacturing.paneer || 0) + (manufacturing.chicken || 0) +
+          (manufacturing.cheesecorn || 0) + (manufacturing.attaveg || 0) + (manufacturing.attachicken || 0)) * 40 +
+          (manufacturing.springroll || 0)
         : 0;
 
       const activeCarts = Array.isArray(distribution) ? new Set(distribution.map((d) => d.cart_id)).size : 0;

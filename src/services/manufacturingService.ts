@@ -18,7 +18,7 @@ export const manufacturingService = {
   },
 
   updateOrCreate: async (data: ManufacturingCreate): Promise<ManufacturingRecord> => {
-    const response = await api.put('/manufacturing', data);
+    const response = await api.post('/manufacturing', data);
     return response.data;
   },
 };

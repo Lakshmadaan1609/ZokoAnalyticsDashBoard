@@ -113,13 +113,24 @@ export default function ManufacturingPage() {
       totals[key] = typedLogs.reduce((sum, log) => sum + (Number((log as Record<string, unknown>)[key]) || 0), 0);
     }
 
-    // Most & Least produced
-    const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
-    const most = sorted[0];
-    const least = sorted.filter(([, v]) => v > 0).pop() || sorted[sorted.length - 1];
+    // Most & Least produced (Normalized to pieces for comparison: 1kg = 40pcs)
+    const normalizedTotals: Record<string, number> = {};
+    for (const key of ITEM_KEYS) {
+      const isPcs = key === 'springroll';
+      normalizedTotals[key] = totals[key] * (isPcs ? 1 : 40);
+    }
 
-    // Average per day
-    const totalAll = Object.values(totals).reduce((s, v) => s + v, 0);
+    const sortedByNormalized = Object.entries(normalizedTotals).sort((a, b) => b[1] - a[1]);
+    const mostKey = sortedByNormalized[0][0];
+    const most = [mostKey, totals[mostKey]];
+
+    const filteredForLeast = sortedByNormalized.filter(([, v]) => v > 0);
+    const leastEntry = filteredForLeast.pop() || sortedByNormalized[sortedByNormalized.length - 1];
+    const leastKey = leastEntry[0];
+    const least = [leastKey, totals[leastKey]];
+
+    // Average per day (Normalized to pieces)
+    const totalAll = Object.entries(totals).reduce((sum, [key, val]) => sum + (val * (key === 'springroll' ? 1 : 40)), 0);
     const avgPerDay = typedLogs.length > 0 ? Math.round(totalAll / typedLogs.length) : 0;
 
     // Weekly data (last 7 logs, or all if fewer)
@@ -132,13 +143,16 @@ export default function ManufacturingPage() {
     });
     const weeklyDatasets = ITEM_KEYS.map((key, i) => ({
       label: ITEM_LABELS[key],
-      data: recentLogs.map((log) => Number((log as Record<string, unknown>)[key]) || 0),
+      data: recentLogs.map((log) => {
+        const val = Number((log as Record<string, unknown>)[key]) || 0;
+        return val * (key === 'springroll' ? 1 : 40);
+      }),
       backgroundColor: FLAT_COLORS[i],
       borderRadius: 4,
       borderSkipped: false as const,
     }));
 
-    return { totals, most, least, avgPerDay, totalAll, weeklyLabels, weeklyDatasets, logCount: typedLogs.length };
+    return { totals, normalizedTotals, most, least, avgPerDay, totalAll, weeklyLabels, weeklyDatasets, logCount: typedLogs.length };
   }, [logs]);
 
   // Watch all fields for live estimate
@@ -456,7 +470,7 @@ export default function ManufacturingPage() {
                           return {
                             labels: ITEM_KEYS.map((k) => ITEM_LABELS[k]),
                             datasets: [{
-                              data: ITEM_KEYS.map((k) => analytics.totals[k]),
+                              data: ITEM_KEYS.map((k) => analytics.normalizedTotals[k]),
                               backgroundColor: GRADIENT_PAIRS.map(([from, to]) => createGradient(ctx, h, from, to)),
                               borderWidth: 0,
                               hoverOffset: 8,
@@ -466,7 +480,7 @@ export default function ManufacturingPage() {
                         return {
                           labels: ITEM_KEYS.map((k) => ITEM_LABELS[k]),
                           datasets: [{
-                            data: ITEM_KEYS.map((k) => analytics.totals[k]),
+                            data: ITEM_KEYS.map((k) => analytics.normalizedTotals[k]),
                             backgroundColor: FLAT_COLORS,
                             borderWidth: 0,
                             hoverOffset: 8,
