@@ -39,7 +39,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen w-full overflow-hidden bg-zinc-950">
+    <div className="flex h-screen w-full overflow-hidden bg-zinc-950">
       <Sidebar
         mobileOpen={mobileMenuOpen}
         onMobileClose={() => setMobileMenuOpen(false)}
