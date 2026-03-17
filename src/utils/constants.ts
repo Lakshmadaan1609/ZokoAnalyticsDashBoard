@@ -17,6 +17,7 @@ export const NAV_ITEMS = [
   { label: 'Manufacturing', href: '/manufacturing', roles: ['superadmin'], icon: 'Factory' },
   { label: 'Stock Distribution', href: '/stock-distribution', roles: ['superadmin', 'staff'], icon: 'Truck' },
   { label: 'Cart POS', href: '/cart-pos', roles: ['superadmin', 'staff'], icon: 'ShoppingCart' },
+  { label: 'History', href: '/history', roles: ['superadmin', 'staff'], icon: 'History' },
   { label: 'Analytics', href: '/analytics', roles: ['superadmin'], icon: 'BarChart3' },
   { label: 'Settings', href: '/settings', roles: ['superadmin'], icon: 'Settings' },
 ];
@@ -44,6 +45,8 @@ export const POS_ITEMS: POSItem[] = [
   { id: 'paneerkurkure', name: 'Paneer Kurkure Momos', category: 'paneer', type: 'kurkure', halfKey: 'half_paneerkurkure', fullKey: 'full_paneerkurkure', halfPrice: 80, fullPrice: 160, icon: '🧀' },
   { id: 'chickenkurkure', name: 'Chicken Kurkure Momos', category: 'chicken', type: 'kurkure', halfKey: 'half_chickenkurkure', fullKey: 'full_chickenkurkure', halfPrice: 80, fullPrice: 160, icon: '🍗' },
   { id: 'cheesecornkurkure', name: 'Cheese Corn Kurkure', category: 'cheesecorn', type: 'kurkure', halfKey: 'half_cheesecornkurkure', fullKey: 'full_cheesecornkurkure', halfPrice: 90, fullPrice: 170, icon: '🌽' },
+  { id: 'springroll', name: 'Spring Roll', category: 'springroll', type: 'steam', halfKey: 'half_springroll', fullKey: 'full_springroll', halfPrice: 60, fullPrice: 100, icon: '🌯' },
+  { id: 'springrollkurkure', name: 'Spring Roll Kurkure', category: 'springroll', type: 'kurkure', halfKey: 'half_springrollkurkure', fullKey: 'full_springrollkurkure', halfPrice: 80, fullPrice: 140, icon: '🌯' },
 ];
 
 export const ITEM_CATEGORIES = [
@@ -51,6 +54,7 @@ export const ITEM_CATEGORIES = [
   { id: 'paneer', label: 'Paneer', color: '#eab308' },
   { id: 'chicken', label: 'Chicken', color: '#ef4444' },
   { id: 'cheesecorn', label: 'Cheese Corn', color: '#f97316' },
+  { id: 'springroll', label: 'Spring Roll', color: '#a855f7' },
   { id: 'attaveg', label: 'Atta Veg', color: '#06b6d4' },
   { id: 'attachicken', label: 'Atta Chicken', color: '#ec4899' },
 ];

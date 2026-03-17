@@ -10,6 +10,7 @@ import {
   Factory,
   Truck,
   ShoppingCart,
+  History,
   BarChart3,
   Settings,
   ChevronLeft,
@@ -18,7 +19,7 @@ import {
 } from 'lucide-react';
 
 const iconMap: Record<string, React.ElementType> = {
-  LayoutDashboard, Factory, Truck, ShoppingCart, BarChart3, Settings,
+  LayoutDashboard, Factory, Truck, ShoppingCart, History, BarChart3, Settings,
 };
 
 interface SidebarProps {

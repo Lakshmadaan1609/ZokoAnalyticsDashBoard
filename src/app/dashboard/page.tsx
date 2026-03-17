@@ -209,12 +209,6 @@ export default function DashboardPage() {
                             {formatCurrency(upi)}
                           </span>
                         </div>
-                        <div className="mt-1 flex items-center justify-between text-[11px] text-zinc-500">
-                          <span>Orders</span>
-                          <span className="font-medium text-zinc-300">
-                            {perf?.total_orders ?? 0}
-                          </span>
-                        </div>
                       </div>
                     </div>
                   );

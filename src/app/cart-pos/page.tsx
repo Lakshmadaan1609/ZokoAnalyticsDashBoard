@@ -89,10 +89,18 @@ export default function CartPOSPage() {
   const cart = store.getCart(activeCartId);
   const accent = accentStyles[activeCartConfig.accent as keyof typeof accentStyles];
 
+  // Cart 1: exclude fried chicken and kurkure chicken; all other carts show full menu
+  const itemsForCart = useMemo(() => {
+    if (activeCartId !== 1) return POS_ITEMS;
+    return POS_ITEMS.filter(
+      (item) => item.id !== 'chickenfried' && item.id !== 'chickenkurkure'
+    );
+  }, [activeCartId]);
+
   const filteredItems = useMemo(() => {
-    if (activeCategory === 'all') return POS_ITEMS;
-    return POS_ITEMS.filter((item) => item.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === 'all') return itemsForCart;
+    return itemsForCart.filter((item) => item.category === activeCategory);
+  }, [activeCategory, itemsForCart]);
 
   const handleCheckout = () => {
     const orderData: CartSalesCreate = { cart_id: activeCartId };
