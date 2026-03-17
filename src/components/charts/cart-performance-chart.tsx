@@ -48,27 +48,25 @@ export default function CartPerformanceChart({ data, isLoading }: CartPerformanc
     );
   }
 
+  const gradientPairs: readonly [string, string][] = [
+    ['#f97316', '#fb923c'],
+    ['#8b5cf6', '#a855f7'],
+    ['#22c55e', '#4ade80'],
+  ];
+  const fallbackColors = ['rgba(249, 115, 22, 0.8)', 'rgba(139, 92, 246, 0.8)', 'rgba(34, 197, 94, 0.8)'];
+
   const chartData = {
     labels: data.map((d) => `Cart ${d.cart_id}`),
     datasets: [
       {
         label: 'Revenue',
         data: data.map((d) => d.total_revenue),
-        backgroundColor: (context: { chart: ChartJS }) => {
+        backgroundColor: (context: { chart: ChartJS; dataIndex: number }) => {
           const { ctx, chartArea } = context.chart;
-          if (!chartArea) {
-            return [
-              'rgba(249, 115, 22, 0.8)',
-              'rgba(139, 92, 246, 0.8)',
-              'rgba(34, 197, 94, 0.8)',
-            ];
-          }
-          const base = [
-            ['#f97316', '#fb923c'],
-            ['#8b5cf6', '#a855f7'],
-            ['#22c55e', '#4ade80'],
-          ] as const;
-          return base.map(([from, to]) => createVerticalGradient(ctx, chartArea, from, to));
+          const i = context.dataIndex;
+          if (!chartArea) return fallbackColors[i] ?? fallbackColors[0];
+          const [from, to] = gradientPairs[i] ?? gradientPairs[0];
+          return createVerticalGradient(ctx, chartArea, from, to);
         },
         borderColor: [
           'rgba(249, 115, 22, 1)',
