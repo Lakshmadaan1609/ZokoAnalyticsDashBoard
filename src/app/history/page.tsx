@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import { useQuery } from '@tanstack/react-query';
+import { useAuthStore } from '@/store/authStore';
 import { cartService } from '@/services/cartService';
 import { CartSalesRecord } from '@/types/apiTypes';
 import { formatCurrency, formatDate, getTodayDate } from '@/utils/helpers';
@@ -16,7 +17,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { History, Calendar, RefreshCw, Receipt, Banknote, Smartphone } from 'lucide-react';
+import CartPerformanceChart from '@/components/charts/cart-performance-chart';
+import ItemPerformanceChart from '@/components/charts/item-performance-chart';
+import { History, Calendar, RefreshCw, Receipt, Banknote, Smartphone, BarChart3, PieChart } from 'lucide-react';
 
 const CART_LABELS: Record<number, string> = {
   1: 'Cart 1',
@@ -24,19 +27,38 @@ const CART_LABELS: Record<number, string> = {
   3: 'Cart 3',
 };
 
+const ITEM_NAMES: Record<string, string> = {
+  vegsteam: 'Veg Steam', vegfried: 'Veg Fried', vegkurkure: 'Veg Kurkure',
+  paneersteam: 'Paneer Steam', paneerfried: 'Paneer Fried', paneerkurkure: 'Paneer Kurkure',
+  chickensteam: 'Chicken Steam', chickenfried: 'Chicken Fried', chickenkurkure: 'Chicken Kurkure',
+  cheesecornsteam: 'Cheese Corn Steam', cheesecornfried: 'Cheese Corn Fried', cheesecornkurkure: 'Cheese Corn Kurkure',
+  springroll: 'Spring Roll', springrollkurkure: 'Spring Roll Kurkure',
+  attavegsteam: 'Atta Veg Steam', attachickensteam: 'Atta Chicken Steam',
+};
+
 export default function HistoryPage() {
+  const { user } = useAuthStore();
+  const isStaff = user?.role === 'staff' && user.cart_id != null;
+  const staffCartId = user?.cart_id ?? 1;
+
   const [selectedDate, setSelectedDate] = useState(getTodayDate());
   const [cartFilter, setCartFilter] = useState<number | 'all'>('all');
+  const [showDetailedHistory, setShowDetailedHistory] = useState(false);
 
-  const { data: sales = [], isLoading, isFetching, refetch } = useQuery({
-    queryKey: ['sales-by-date', selectedDate],
-    queryFn: () => cartService.getSalesByDate(selectedDate),
+  const { data: rawSales, isLoading, isFetching, isError, error, refetch } = useQuery({
+    queryKey: ['sales-by-date', selectedDate, isStaff ? staffCartId : 'all'],
+    queryFn: () =>
+      cartService.getSalesByDate(selectedDate, isStaff ? staffCartId : undefined),
     staleTime: 30000,
   });
 
-  const filteredSales = cartFilter === 'all'
+  const sales = Array.isArray(rawSales) ? rawSales : [];
+
+  // Staff: only show their cart; superadmin: show all carts
+  const cartFilterForStaff = isStaff ? staffCartId : cartFilter;
+  const filteredSales = cartFilterForStaff === 'all'
     ? sales
-    : (sales as CartSalesRecord[]).filter((s) => s.cart_id === cartFilter);
+    : (sales as CartSalesRecord[]).filter((s) => s.cart_id === cartFilterForStaff);
 
   const totals = (sales as CartSalesRecord[]).reduce(
     (acc, s) => {
@@ -48,7 +70,8 @@ export default function HistoryPage() {
     { orders: 0, cash: 0, upi: 0 }
   );
 
-  const byCart = [1, 2, 3].map((cartId) => {
+  const cartIdsToShow = isStaff ? [staffCartId] : [1, 2, 3];
+  const byCart = cartIdsToShow.map((cartId) => {
     const cartSales = (sales as CartSalesRecord[]).filter((s) => s.cart_id === cartId);
     const cash = cartSales.reduce((sum, s) => sum + (s.cash_total ?? 0), 0);
     const upi = cartSales.reduce((sum, s) => sum + (s.upi_total ?? 0), 0);
@@ -61,6 +84,32 @@ export default function HistoryPage() {
       total: cash + upi,
     };
   });
+
+  const cartPerformanceData = useMemo(() => byCart.map((c) => ({
+    cart_id: c.cartId,
+    total_revenue: c.total,
+    total_orders: c.orders,
+    cash_total: c.cash,
+    upi_total: c.upi,
+  })), [byCart]);
+
+  const itemSalesData = useMemo(() => {
+    const typed = sales as CartSalesRecord[];
+    if (typed.length === 0) return [];
+    const itemTotals: Record<string, number> = {};
+    for (const sale of typed) {
+      for (const [key, name] of Object.entries(ITEM_NAMES)) {
+        const halfKey = `half_${key}` as keyof CartSalesRecord;
+        const fullKey = `full_${key}` as keyof CartSalesRecord;
+        const halfVal = (sale[halfKey] as number) || 0;
+        const fullVal = (sale[fullKey] as number) || 0;
+        if (halfVal + fullVal > 0) {
+          itemTotals[name] = (itemTotals[name] || 0) + halfVal + fullVal;
+        }
+      }
+    }
+    return Object.entries(itemTotals).map(([item, quantity]) => ({ item, quantity }));
+  }, [sales]);
 
   return (
     <DashboardLayout>
@@ -87,6 +136,15 @@ export default function HistoryPage() {
             <Button
               variant="outline"
               size="sm"
+              onClick={() => setShowDetailedHistory((v) => !v)}
+              className="gap-2 border-white/10 bg-white/5 text-zinc-300 hover:bg-white/10"
+            >
+              <BarChart3 className="h-4 w-4" />
+              {showDetailedHistory ? 'Hide' : 'Detailed'} History
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => refetch()}
               disabled={isFetching}
               className="gap-2 border-white/10 bg-white/5 text-zinc-300 hover:bg-white/10"
@@ -96,6 +154,65 @@ export default function HistoryPage() {
             </Button>
           </div>
         </div>
+
+        {isError && (
+          <Card className="border-red-500/20 bg-red-500/5">
+            <CardContent className="flex flex-col items-center justify-center gap-3 py-6">
+              <p className="text-sm font-medium text-red-400">Could not load sales data</p>
+              <p className="text-xs text-zinc-500 text-center">
+                {error instanceof Error ? error.message : 'Check your connection and try again.'}
+              </p>
+              <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2 border-red-500/30 text-red-400 hover:bg-red-500/10">
+                <RefreshCw className="h-4 w-4" />
+                Retry
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Detailed dashboard for selected date */}
+        {showDetailedHistory && (
+          <div className="space-y-4">
+            <Card className="border-white/10 bg-zinc-900/50">
+              <CardHeader className="border-b border-white/5 pb-4">
+                <CardTitle className="text-base font-semibold text-zinc-200">
+                  Dashboard for {formatDate(selectedDate)}
+                </CardTitle>
+                <p className="text-xs text-zinc-500">
+                  Cart performance and item sales for the selected date
+                </p>
+              </CardHeader>
+              <CardContent className="pt-4">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                  <div>
+                    <div className="mb-3 flex items-center gap-2">
+                      <BarChart3 className="h-4 w-4 text-orange-400" />
+                      <span className="text-sm font-medium text-zinc-300">Revenue by Cart</span>
+                    </div>
+                    <div className="h-[280px]">
+                      <CartPerformanceChart
+                        data={cartPerformanceData}
+                        isLoading={isLoading}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-3 flex items-center gap-2">
+                      <PieChart className="h-4 w-4 text-violet-400" />
+                      <span className="text-sm font-medium text-zinc-300">Item Sales</span>
+                    </div>
+                    <div className="h-[280px]">
+                      <ItemPerformanceChart
+                        data={itemSalesData}
+                        isLoading={isLoading}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Summary cards */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -150,39 +267,41 @@ export default function HistoryPage() {
         <Card className="border-white/10 bg-zinc-900/50">
           <CardHeader className="border-b border-white/5 pb-4">
             <CardTitle className="text-base font-semibold text-zinc-200">
-              By Cart — {formatDate(selectedDate)}
+              {isStaff ? `${CART_LABELS[staffCartId] ?? `Cart ${staffCartId}`} — ${formatDate(selectedDate)}` : `By Cart — ${formatDate(selectedDate)}`}
             </CardTitle>
             <p className="text-xs text-zinc-500">
-              Filter the list below by cart or view all
+              {isStaff ? 'Your cart summary for the selected date' : 'Filter the list below by cart or view all'}
             </p>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="mb-4 flex flex-wrap gap-2">
-              <button
-                onClick={() => setCartFilter('all')}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                  cartFilter === 'all'
-                    ? 'bg-orange-500/20 text-orange-400'
-                    : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                All
-              </button>
-              {byCart.map(({ cartId, label, orders, cash, upi, total }) => (
+            {!isStaff && (
+              <div className="mb-4 flex flex-wrap gap-2">
                 <button
-                  key={cartId}
-                  onClick={() => setCartFilter(cartId)}
+                  onClick={() => setCartFilter('all')}
                   className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                    cartFilter === cartId
+                    cartFilter === 'all'
                       ? 'bg-orange-500/20 text-orange-400'
                       : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white'
                   }`}
                 >
-                  {label} ({orders})
+                  All
                 </button>
-              ))}
-            </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                {byCart.map(({ cartId, label, orders }) => (
+                  <button
+                    key={cartId}
+                    onClick={() => setCartFilter(cartId)}
+                    className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                      cartFilter === cartId
+                        ? 'bg-orange-500/20 text-orange-400'
+                        : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    {label} ({orders})
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className={`grid grid-cols-1 gap-3 ${isStaff ? '' : 'sm:grid-cols-3'}`}>
               {byCart.map(({ cartId, label, orders, cash, upi, total }) => (
                 <div
                   key={cartId}

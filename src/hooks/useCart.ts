@@ -9,7 +9,7 @@ export function useCart() {
   const queryClient = useQueryClient();
 
   const saleMutation = useMutation({
-    mutationFn: (data: CartSalesCreate) => cartService.updateOrCreateSale(data),
+    mutationFn: (data: CartSalesCreate) => cartService.submitOrderForDate(data),
     onSuccess: (_data, variables) => {
       toast.success(`Order placed for Cart ${variables.cart_id}! 🎉`);
       queryClient.invalidateQueries({ queryKey: ['sales'] });

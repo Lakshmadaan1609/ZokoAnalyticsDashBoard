@@ -86,7 +86,11 @@ export default function StockDistributionPage() {
 
   const handleDistribute = async (cartId: number) => {
     setSubmittingCart(cartId);
-    const payload: Record<string, number | undefined> = { cart_id: cartId };
+    const todayYmd = (() => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    })();
+    const payload: Record<string, number | string | undefined> = { cart_id: cartId, date: todayYmd };
     DISTRIBUTION_ITEMS.forEach((item) => {
       const val = formData[item][cartId];
       if (val > 0) {

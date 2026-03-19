@@ -15,7 +15,7 @@ export function useStock() {
   });
 
   const distributeMutation = useMutation({
-    mutationFn: (data: DistributionCreate) => stockService.updateOrCreate(data),
+    mutationFn: (data: DistributionCreate) => stockService.submitDistribution(data),
     onSuccess: () => {
       toast.success('Stock distributed successfully!');
       queryClient.invalidateQueries({ queryKey: ['distribution'] });
