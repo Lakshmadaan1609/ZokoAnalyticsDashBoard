@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { cartService } from '@/services/cartService';
+import { getApiErrorMessage } from '@/services/api';
 import { CartSalesCreate } from '@/types/apiTypes';
 import { toast } from 'sonner';
 
@@ -14,8 +15,8 @@ export function useCart() {
       toast.success(`Order placed for Cart ${variables.cart_id}! 🎉`);
       queryClient.invalidateQueries({ queryKey: ['sales'] });
     },
-    onError: (error: Error & { response?: { data?: { detail?: string } } }) => {
-      toast.error(error.response?.data?.detail || 'Failed to place order');
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error) || 'Failed to place order');
     },
   });
 

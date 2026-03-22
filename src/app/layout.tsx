@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   description:
     "Web POS & Operations Dashboard for Zoko Momo cart business. Manage manufacturing, distribution, and sales across all carts.",
   keywords: ["momo", "POS", "dashboard", "food business", "operations"],
+  icons: {
+    icon: "/zoko-momo-logo.png",
+    apple: "/zoko-momo-logo.png",
+  },
 };
 
 export default function RootLayout({

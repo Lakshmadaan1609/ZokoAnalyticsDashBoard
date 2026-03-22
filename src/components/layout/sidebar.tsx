@@ -17,6 +17,7 @@ import {
   ChevronRight,
   X,
 } from 'lucide-react';
+import { BrandLogo } from '@/components/brand-logo';
 
 const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard, Factory, Truck, ShoppingCart, History, BarChart3, Settings,
@@ -62,9 +63,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
             </div>
           )}
           {collapsed && (
-            <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-red-600 shadow-lg shadow-orange-500/20">
-              <span className="text-lg font-bold text-white">Z</span>
-            </div>
+            <BrandLogo className="mx-auto h-9 w-9 shrink-0" priority />
           )}
           <button onClick={onMobileClose} className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:bg-white/10 hover:text-white lg:hidden">
             <X className="h-5 w-5" />

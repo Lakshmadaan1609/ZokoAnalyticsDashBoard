@@ -35,7 +35,7 @@ export default function CartPerformanceChart({ data, isLoading }: CartPerformanc
   if (isLoading) {
     return (
       <div className="flex h-[300px] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" />
       </div>
     );
   }
@@ -49,7 +49,7 @@ export default function CartPerformanceChart({ data, isLoading }: CartPerformanc
   }
 
   const gradientPairs: readonly [string, string][] = [
-    ['#f97316', '#fb923c'],
+    ['#d4af37', '#f5d76e'],
     ['#8b5cf6', '#a855f7'],
     ['#22c55e', '#4ade80'],
   ];

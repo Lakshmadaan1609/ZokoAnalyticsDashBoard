@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { User } from '@/types/apiTypes';
 import { LogIn } from 'lucide-react';
+import { BrandLogo } from '@/components/brand-logo';
 
 export default function LoginPage() {
   const { login, isAuthenticated, user, checkSession } = useAuthStore();
@@ -75,9 +76,7 @@ export default function LoginPage() {
     <div className="flex h-screen items-center justify-center bg-zinc-950 p-4">
       <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-zinc-900/50 p-6 shadow-2xl backdrop-blur-sm sm:p-8">
         <div className="mb-8 flex flex-col items-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 shadow-lg shadow-orange-500/20">
-            <span className="text-3xl font-black text-white">Z</span>
-          </div>
+          <BrandLogo className="mb-4 h-16 w-16" priority />
           <h1 className="text-2xl font-bold tracking-tight text-white">Zoko Momo</h1>
           <p className="mt-1 text-sm text-zinc-500">Sign in to your account</p>
         </div>

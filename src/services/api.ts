@@ -24,6 +24,37 @@ const api = axios.create({
   timeout: 15000,
 });
 
+/** List endpoints return `{ value: T[]; Count: number }` or a raw array. */
+export function unwrapList<T>(data: unknown): T[] {
+  if (Array.isArray(data)) return data as T[];
+  if (
+    data !== null &&
+    typeof data === 'object' &&
+    'value' in data &&
+    Array.isArray((data as { value: unknown }).value)
+  ) {
+    return (data as { value: T[] }).value;
+  }
+  return [];
+}
+
+export function getApiErrorMessage(error: unknown): string {
+  if (error && typeof error === 'object' && 'response' in error) {
+    const detail = (error as { response?: { data?: { detail?: unknown } } }).response?.data?.detail;
+    if (typeof detail === 'string') return detail;
+    if (Array.isArray(detail)) {
+      return detail
+        .map((item: { msg?: string }) =>
+          typeof item?.msg === 'string' ? item.msg : JSON.stringify(item)
+        )
+        .filter(Boolean)
+        .join('; ');
+    }
+  }
+  if (error instanceof Error) return error.message;
+  return 'An error occurred';
+}
+
 // Request interceptor
 api.interceptors.request.use(
   (config) => {

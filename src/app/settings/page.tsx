@@ -60,8 +60,8 @@ export default function SettingsPage() {
       icon: Database,
       title: 'Data Management',
       description: 'Export data and manage backups',
-      color: 'text-orange-400',
-      bg: 'bg-orange-500/10',
+      color: 'text-brand-400',
+      bg: 'bg-brand-500/10',
     },
   ];
 
