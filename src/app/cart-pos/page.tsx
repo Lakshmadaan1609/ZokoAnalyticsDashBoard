@@ -103,7 +103,8 @@ export default function CartPOSPage() {
   }, [activeCategory, itemsForCart]);
 
   const handleCheckout = () => {
-    const orderData: CartSalesCreate = { cart_id: activeCartId };
+    const today = new Date().toISOString().split('T')[0];
+    const orderData: CartSalesCreate = { cart_id: activeCartId, date: today };
     for (const orderItem of cart.items) {
       const halfKey = orderItem.item.halfKey as keyof CartSalesCreate;
       const fullKey = orderItem.item.fullKey as keyof CartSalesCreate;

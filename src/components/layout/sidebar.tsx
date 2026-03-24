@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
@@ -53,8 +54,14 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
           {!collapsed && (
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-red-600 shadow-lg shadow-orange-500/20">
-                <span className="text-lg font-bold text-white">Z</span>
+              <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg">
+                <Image
+                  src="/zoko-momo-logo.png"
+                  alt="Zoko Momo"
+                  fill
+                  className="object-contain"
+                  sizes="36px"
+                />
               </div>
               <div>
                 <h1 className="text-base font-bold tracking-tight text-white">Zoko Momo</h1>

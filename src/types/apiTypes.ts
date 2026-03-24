@@ -59,6 +59,8 @@ export interface DistributionRecord extends DistributionCreate {
 // ==================== CART SALES ====================
 export interface CartSalesCreate {
   cart_id: number;
+  /** Business date YYYY-MM-DD; sent on POST/PUT when API supports it */
+  date?: string | null;
   half_vegsteam?: number | null;
   full_vegsteam?: number | null;
   half_vegfried?: number | null;

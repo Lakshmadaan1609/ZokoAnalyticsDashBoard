@@ -110,6 +110,7 @@ export default function StockDistributionPage() {
       return;
     }
     setSubmittingCart(cartId);
+    payload.date = new Date().toISOString().split('T')[0];
     distribute(payload, {
       onSettled: () => {
         setSubmittingCart(null);

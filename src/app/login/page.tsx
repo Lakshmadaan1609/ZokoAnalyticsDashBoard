@@ -35,7 +35,7 @@ export default function LoginPage() {
     setError('');
 
     const trimmedUser = username.trim().toLowerCase();
-    
+
     // Super Admin: Laksh / 1609
     if (trimmedUser === 'laksh' && password === '1609') {
       const adminUser: User = {
@@ -66,62 +66,75 @@ export default function LoginPage() {
       return;
     }
 
-    // Invalid credentials
     setError('Invalid username or password');
   };
 
   if (isAuthenticated) return null;
 
   return (
-    <div className="flex h-screen items-center justify-center bg-zinc-950 p-4">
-      <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-zinc-900/50 p-6 shadow-2xl backdrop-blur-sm sm:p-8">
-        <div className="mb-8 flex flex-col items-center">
-          <BrandLogo className="mb-4 h-16 w-16" priority />
-          <h1 className="text-2xl font-bold tracking-tight text-white">Zoko Momo</h1>
-          <p className="mt-1 text-sm text-zinc-500">Sign in to your account</p>
+    <div className="flex min-h-[100dvh] min-h-screen items-center justify-center bg-black px-4 py-6 sm:p-6">
+      <div className="flex w-full max-w-[400px] flex-col">
+        <div className="w-full rounded-2xl border border-[#d4af37]/20 bg-zinc-900/80 p-5 shadow-xl shadow-black/40 backdrop-blur-sm sm:p-7">
+          <div className="mb-6 flex flex-col items-center sm:mb-7">
+            <BrandLogo className="h-20 w-20 sm:h-24 sm:w-24" priority />
+            <h1 className="mt-2 text-center text-lg font-bold tracking-tight text-[#d4af37] sm:text-xl">
+              Zoko Momo
+            </h1>
+            <p className="mt-0.5 text-center text-xs text-zinc-500 sm:text-sm">
+              Operations · Sign in to your account
+            </p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="username" className="text-zinc-400">
+                Username
+              </Label>
+              <Input
+                id="username"
+                type="text"
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="min-h-[48px] border-zinc-700 bg-zinc-800/80 text-white placeholder:text-zinc-500 focus:border-[#d4af37]/50 focus:ring-[#d4af37]/20 sm:min-h-[52px]"
+                placeholder="Enter your username"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-zinc-400">
+                Password
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="min-h-[48px] border-zinc-700 bg-zinc-800/80 text-white placeholder:text-zinc-500 focus:border-[#d4af37]/50 focus:ring-[#d4af37]/20 sm:min-h-[52px]"
+                placeholder="••••••••"
+              />
+            </div>
+
+            {error && (
+              <p className="rounded-lg border border-red-500/20 bg-red-500/10 py-2.5 text-center text-sm font-medium text-red-400">
+                {error}
+              </p>
+            )}
+
+            <Button
+              type="submit"
+              className="min-h-[48px] w-full gap-2 rounded-xl bg-[#d4af37] font-bold text-black shadow-lg shadow-[#d4af37]/25 transition hover:bg-[#c9a227] active:scale-[0.98] sm:min-h-[52px]"
+            >
+              <LogIn className="h-5 w-5" />
+              Sign In
+            </Button>
+          </form>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="username" className="text-zinc-400">Username</Label>
-            <Input
-              id="username"
-              type="text"
-              required
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="h-12 border-white/10 bg-zinc-800/50 text-white placeholder:text-zinc-600 focus:border-orange-500/50"
-              placeholder="Enter your username"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-zinc-400">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="h-12 border-white/10 bg-zinc-800/50 text-white placeholder:text-zinc-600 focus:border-orange-500/50"
-              placeholder="••••••••"
-            />
-          </div>
-
-          {error && (
-            <p className="text-sm text-red-500 text-center font-medium bg-red-500/10 py-2 rounded-lg border border-red-500/20">
-              {error}
-            </p>
-          )}
-
-          <Button
-            type="submit"
-            className="w-full h-12 mt-2 gap-2 font-bold bg-gradient-to-r from-orange-500 to-red-600 text-white hover:opacity-90 shadow-lg shadow-orange-500/20"
-          >
-            <LogIn className="h-5 w-5" />
-            Sign In
-          </Button>
-        </form>
+        <p className="mt-5 text-center text-xs text-zinc-600">
+          Zoko Momo · Operations Dashboard
+        </p>
       </div>
     </div>
   );
